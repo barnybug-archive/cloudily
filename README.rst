@@ -1,19 +1,19 @@
-Cloudily - visualize your EC2 infrastructure
-============================================
+Cloudily - automatically visualize your EC2 infrastructure
+==========================================================
 
 .. image:: http://loads.pickle.me.uk/static/images/cloudily.png
 
 Getting Started
 ---------------
 
-You'll need [graphviz](http://www.graphviz.org/) installed, and optionally
-[imagemagick](http://www.imagemagick.org/) to use the `--preview` functionality.
+You'll need `graphviz <http://www.graphviz.org/>`_ installed, and optionally
+`imagemagick <http://www.imagemagick.org/>`_ to use the `--preview` functionality.
 
 On Ubuntu::
 
     $ sudo apt-get install graphviz imagemagick
 
-Install cloudily from [PyPI](pypi.python.org/pypi/graphops)::
+Install cloudily from `PyPI <pypi.python.org/pypi/cloudily>`_::
 
     $ sudo pip install cloudily
 
