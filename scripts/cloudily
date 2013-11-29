@@ -108,7 +108,10 @@ class LoginScanner(HostScanner):
 class NetstatScanner(HostScanner):
     """Get host-host connections by open connections"""
     def __init__(self, ports):
-        self.ports = set(ports.split(','))
+        if ports:
+            self.ports = set(ports.split(','))
+        else:
+            self.ports = None
 
     # some additional services along with /etc/services
     known_services = { 
@@ -256,8 +259,8 @@ class Cloudily(object):
     def run(self):
         self.parse_args()
         self.configure()
-        # self.scan()
-        # self.save(self.opts.out)
+        self.scan()
+        self.save(self.opts.out)
         if self.opts.png:
             self.render(self.opts.out, self.opts.png, self.opts.layout)
         if self.opts.preview:
@@ -280,9 +283,9 @@ class Cloudily(object):
         parser.add_option('--layout', default='dot', help='Select a layout to use for the png image')
         self.opts, self.args = parser.parse_args()
         if not self.opts.arp and not self.opts.logins and not self.opts.conns:
-            self.opts.arp = True
-        # if not self.opts.hosts and not self.opts.ec2:
-        #     abort("Please specify --hosts file.txt or --ec2")
+            self.opts.conns = True
+        if not self.opts.hosts and not self.opts.ec2:
+            self.opts.ec2 = 'instances,elb'
 
     def configure(self):
         self.scanners = s = []
