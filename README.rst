@@ -63,6 +63,6 @@ With ``--conns`` you can also limit to a selection of ports using ``--connsports
 
 Changelog
 ---------
-0.1.0
+0.1.1
 
 - First release
