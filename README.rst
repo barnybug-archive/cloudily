@@ -7,13 +7,13 @@ Getting Started
 ---------------
 
 You'll need `graphviz <http://www.graphviz.org/>`_ installed, and optionally
-`imagemagick <http://www.imagemagick.org/>`_ to use the `--preview` functionality.
+`imagemagick <http://www.imagemagick.org/>`_ to use the ``--preview`` functionality.
 
 On Ubuntu::
 
     $ sudo apt-get install graphviz imagemagick
 
-Install cloudily from `PyPI <pypi.python.org/pypi/cloudily>`_::
+Install cloudily from `PyPI <http://pypi.python.org/pypi/graphops>`_ like so::
 
     $ sudo pip install cloudily
 
@@ -25,7 +25,7 @@ Open montage.png in your favourite image viewer::
 
     $ qiv montage.png
 
-``--preview`` makes a montage of the various graphviz layouts available.
+The ``--preview`` makes a montage of the various graphviz layouts available.
 Depending on your network usually 'dot' produces the cleaner layouts, but others
 may work better / look cooler.
 
