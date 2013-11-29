@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import Command
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 long_description = file('README.rst').read()
 
 class tag(Command):
