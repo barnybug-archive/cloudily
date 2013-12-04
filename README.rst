@@ -63,6 +63,10 @@ With ``--conns`` you can also limit to a selection of ports using ``--connsports
 
 Changelog
 ---------
+0.1.3
+
+- .ssh/config optional
+
 0.1.2
 
 - Fix defaults
