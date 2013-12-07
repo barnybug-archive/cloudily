@@ -215,8 +215,13 @@ class EC2NodeScanner(NodeScanner):
 
         if 'elb' in self.options:
             for lb in self.get_elbs():
-                hostname, aliaslist, ipaddrlist = socket.gethostbyname_ex(lb.dns_name)
-                aliases = ['host:' + hostname] + ['host:' + h for h in aliaslist] + ['ip:' + ip for ip in ipaddrlist]
+                aliases = []
+                try:
+                    logger.debug("Looking up %s" % lb.dns_name)
+                    hostname, aliaslist, ipaddrlist = socket.gethostbyname_ex(lb.dns_name)
+                    aliases = ['host:' + hostname] + ['host:' + h for h in aliaslist] + ['ip:' + ip for ip in ipaddrlist]
+                except socket.error:
+                    logger.debug("Could not resolve %s (possibly an internal ELB)" % lb.dns_name)
                 elb = Elb('elb:'+lb.name, lb.name + ' ELB', aliases)
                 yield elb
                 for inst in lb.instances:
