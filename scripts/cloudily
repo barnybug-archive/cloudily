@@ -188,15 +188,23 @@ class EC2NodeScanner(NodeScanner):
     - instances
     - ELBs
     """
-    def __init__(self, key, secret, options):
+    def __init__(self, key, secret, options, groups):
         self.key = key
         self.secret = secret
         self.options = options
+        self.groups = groups
 
     def get_instances(self, filters={}):
         conn = self.get_connection()
         filters = {'instance-state-name': 'running'}
-        return (inst for r in conn.get_all_instances(filters=filters) for inst in r.instances)
+        instances = (inst for r in conn.get_all_instances(filters=filters) for inst in r.instances)
+        # post filters
+        if self.groups:
+            def contains_group(inst):
+                groupnames = set(g.name for g in inst.groups)
+                return groupnames & set(self.groups)
+            instances = (inst for inst in instances if contains_group(inst))
+        return instances
 
     def get_elbs(self):
         conn = boto.ec2.elb.connect_to_region(os.getenv('EC2_REGION', 'us-east-1'))
@@ -279,6 +287,7 @@ class Cloudily(object):
         parser.add_option('--hosts', help='A static host list: file.txt')
         parser.add_option('--ec2', help='Scan EC2 for instances, elb,etc.')
         parser.add_option('--ec2creds', default='env', help='Use EC2 for host list')
+        parser.add_option('--ec2groups', help='Filter by ec2 security groups (comma-separate multiple groups)')
         parser.add_option('--arp', action='store_true', help='Scan arp cache')
         parser.add_option('--logins', help='Scan user logins. Value currently unused.')
         parser.add_option('--conns', action='store_true', help='Scan open connections (netstat)')
@@ -308,7 +317,10 @@ class Cloudily(object):
                 if not secret:
                     abort('AWS_SECRET_ACCESS_KEY not set')
             options = self.opts.ec2.split(',')
-            s.append(EC2NodeScanner(key, secret, options))
+            groups = None
+            if self.opts.ec2groups:
+                groups = self.opts.ec2groups.split(',')
+            s.append(EC2NodeScanner(key, secret, options, groups))
 
         if self.opts.arp:
             s.append(ArpScanner())

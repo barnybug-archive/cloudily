@@ -39,6 +39,9 @@ You need to set your Amazon credentials as environment variables: AWS_ACCESS_KEY
 and AWS_SECRET_ACCESS_KEY or configure them in ~/.boto. For more information see:
 http://code.google.com/p/boto/wiki/BotoConfig
 
+``--ec2groups`` may be used to filter by security group. This accepts a comma-
+separated list of multiple groups. eg. ``--ec2groups group1,group2``
+
 Discovery
 ---------
 There are various ways Cloudily can discover the connections between your
