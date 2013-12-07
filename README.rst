@@ -66,6 +66,14 @@ With ``--conns`` you can also limit to a selection of ports using ``--connsports
 
 Changelog
 ---------
+0.1.4
+
+- Robustify code to missing values. Fixes #3
+
+- Add --ec2groups option. Fixes #1
+
+- Fix for internal ELBs. Fixes #2
+
 0.1.3
 
 - .ssh/config optional
