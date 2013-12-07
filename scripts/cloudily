@@ -22,7 +22,7 @@ class Node(object):
     def __init__(self, id, name, aliases=[]):
         self.id = id
         self.name = name
-        self.aliases = ['id:' + id] + aliases
+        self.aliases = ['id:%s' % id] + aliases
 
     def __hash__(self):
         return hash(self.id)
@@ -91,7 +91,7 @@ class ArpScanner(HostScanner):
         for line in output.split('\n'):
             m = self.re_arp_ip.search(line)
             if m:
-                yield host, 'ip:' + m.group(1), True, None
+                yield host, 'ip:%s' % m.group(1), True, None
 
 class LoginScanner(HostScanner):
     """Get user-host connections by user logins"""
@@ -104,7 +104,7 @@ class LoginScanner(HostScanner):
             if not line or line.startswith('wtmp begins') or line.startswith('reboot'):
                 continue
             username = line.split(' ')[0]
-            yield host, 'user:' + username, False, None
+            yield host, 'user:%s' % username, False, None
 
 class NetstatScanner(HostScanner):
     """Get host-host connections by open connections"""
@@ -161,11 +161,11 @@ class NetstatScanner(HostScanner):
                     continue
                 label = self.getservbyport(rport, proto)
                 if label:
-                    yield host, 'ip:' + rip, True, label
+                    yield host, 'ip:%s' % rip, True, label
                     continue
                 label = self.getservbyport(lport, proto)
                 if label:
-                    yield host, 'ip:' + rip, False, label
+                    yield host, 'ip:%s' % rip, False, label
                     continue
                 # unknown protocol on either end - warn?
                 logging.warn('Unknown source/dest port on connection: %s (%r)' % (line, parts))
@@ -218,7 +218,7 @@ class EC2NodeScanner(NodeScanner):
         if 'instances' in self.options:
             for inst in self.get_instances():
                 name = inst.tags.get('Name') or inst.public_dns_name
-                aliases = ['id:' + inst.id, 'host:' + inst.public_dns_name, 'ip:' + inst.ip_address, 'ip:' + inst.private_ip_address]
+                aliases = ['id:%s' % inst.id, 'host:%s' % inst.public_dns_name, 'ip:%s' % inst.ip_address, 'ip:%s' % inst.private_ip_address]
                 yield Host(inst.id, inst.public_dns_name, aliases, name)
 
         if 'elb' in self.options:
@@ -227,13 +227,13 @@ class EC2NodeScanner(NodeScanner):
                 try:
                     logger.debug("Looking up %s" % lb.dns_name)
                     hostname, aliaslist, ipaddrlist = socket.gethostbyname_ex(lb.dns_name)
-                    aliases = ['host:' + hostname] + ['host:' + h for h in aliaslist] + ['ip:' + ip for ip in ipaddrlist]
+                    aliases = ['host:%s' % hostname] + ['host:%s' % h for h in aliaslist] + ['ip:%s' % ip for ip in ipaddrlist]
                 except socket.error:
                     logger.debug("Could not resolve %s (possibly an internal ELB)" % lb.dns_name)
-                elb = Elb('elb:'+lb.name, lb.name + ' ELB', aliases)
+                elb = Elb('elb:%s' % lb.name, '%s ELB' % lb.name, aliases)
                 yield elb
                 for inst in lb.instances:
-                    yield elb, 'id:' + inst.id, True, None
+                    yield elb, 'id:%s' % inst.id, True, None
 
 class FileNodeScanner(NodeScanner):
     """Scanner using static host list"""
@@ -245,7 +245,7 @@ class FileNodeScanner(NodeScanner):
             for line in fin:
                 hostname = line.strip()
                 ip = socket.gethostbyname(hostname)
-                aliases = ['host:' + hostname, 'ip:' + ip]
+                aliases = ['host:%s' % hostname, 'ip:%s' % ip]
                 yield Host(hostname, hostname, aliases, hostname)
 
 class Edge(object):
@@ -406,8 +406,8 @@ class Cloudily(object):
     def preview(self, filename):
         files = []
         for prog in ('dot', 'neato', 'circo', 'fdp', 'sfdp', 'twopi'):
-            self.render(filename, prog+'.png', prog)
-            files.append(prog+'.png')
+            self.render(filename, '%s.png' % prog, prog)
+            files.append('%s.png' % prog)
 
         montage = 'montage.png'
         args = ['montage', '-label', "'%f'"]
